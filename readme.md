@@ -1,20 +1,17 @@
-# Data Import Step:
+# OSM Tile Server
 
-Before running the tile server, you need to import the data. Use the following steps:
-
-Download the australia-latest.osm.pbf file from Geofabrik's download server and place it in the same directory as your docker-compose.yml file.
-
+Before running the tile server, you need to import the data. You can do this via the setup script.
 ```bash
-wget https://download.geofabrik.de/australia-oceania/australia-latest.osm.pbf
+./setup_tile_server.sh
 ```
 
-Import the Data. This will import the australia-latest.osm.pbf file into the PostgreSQL database.
-Run the import process using the following command:
 
-```bash
-docker-compose run osm-tile-server import
-```
-
+Use Docker Compose to start the server: 
 ```bash
 docker-compose up -d
 ```
+
+Access the tile server:
+
+Visit http://your.server.ip.address:8080/tile/0/0/0.png to verify the setup.
+Visit http://your.server.ip.address:8080 to view the interactive map.

@@ -1,36 +1,20 @@
-version: '3.7'
+version: '3.8'
 
 services:
-  # Database setup and data import
-  osm-importer:
+  tile-server:
     image: overv/openstreetmap-tile-server
-    container_name: osm-importer
-    volumes:
-      - osm-data:/var/lib/postgresql/12/main  # Volume for PostgreSQL data
-      - ./australia-latest.osm.pbf:/data.osm.pbf  # Mount the .osm.pbf file
-    environment:
-      - UPDATES=disabled  # Disable automatic updates unless needed
-    command: import  # Command to import the data
-    shm_size: "192m"  # Adjust shared memory if needed
-
-  # Tile server to serve the map tiles
-  osm-tile-server:
-    image: overv/openstreetmap-tile-server
-    container_name: osm-tile-server
-    depends_on:
-      - osm-importer
-    volumes:
-      - osm-data:/var/lib/postgresql/12/main  # Use the same volume as the importer
-      - osm-tiles:/var/lib/mod_tile  # Volume for rendered tiles
+    container_name: osm_tile_server
     ports:
-      - "8080:80"  # Expose the tile server on port 8080
+      - "8080:80"
+    volumes:
+      - osm-data:/data/database
+      - tile-cache:/var/lib/mod_tile # Persist the cache
     environment:
-      - THREADS=4  # Number of threads for rendering
-      - ALLOW_CORS=enabled  # Enable CORS if required
-      - UPDATES=disabled  # Disable updates unless needed
-    command: run  # Command to start the tile server
-    shm_size: "192m"  # Adjust shared memory if needed
+      - ALLOW_CORS=1 # Enable CORS
+    command: run
+    restart: unless-stopped
 
 volumes:
-  osm-data:  # Volume for PostgreSQL data
-  osm-tiles:  # Volume for rendered tiles
+  osm-data:
+    external: true
+  tile-cache:
